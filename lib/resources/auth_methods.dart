@@ -9,8 +9,15 @@ class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // sign up user
+  Future<UserModel> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
 
+    DocumentSnapshot<Map<String, dynamic>> snap =
+        await _firestore.collection("users").doc(currentUser.uid).get();
+    return UserModel.fromSnap(snap);
+  }
+
+  // sign up user
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -45,7 +52,9 @@ class AuthMethods {
           following: [],
         );
 
-        await _firestore.collection("users").doc(cred.user!.uid).set(user.toJson(),);
+        await _firestore.collection("users").doc(cred.user!.uid).set(
+              user.toJson(),
+            );
 
         res = "success";
       }
