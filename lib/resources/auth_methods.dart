@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:instagram_flutter/resources/storage_methods.dart';
 
 class AuthMethods {
@@ -52,4 +52,32 @@ class AuthMethods {
     }
     return res;
   }
+
+  //log in user
+  // Future<UserCredential?>
+
+  Future<String> loginUser({
+    required String email,
+    required String password,
+  }) async {
+    // UserCredential? credential ;
+    String res = "Some error occurred";
+    try {
+      // credential =
+      await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      res = "success";
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+    return res;
+    //return credential;
+  }
 }
+
