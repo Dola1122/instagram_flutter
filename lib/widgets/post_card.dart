@@ -7,6 +7,8 @@ import 'package:instagram_flutter/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../screens/comments_screen.dart';
+
 class PostCard extends StatefulWidget {
   final snap;
 
@@ -146,16 +148,24 @@ class _PostCardState extends State<PostCard> {
                         likes: widget.snap["likes"],
                       );
                     },
-                    icon: widget.snap["likes"].contains(user.uid) ? Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    ):Icon(
-                      Icons.favorite_border_outlined,
-                    ),
+                    icon: widget.snap["likes"].contains(user.uid)
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border_outlined,
+                          ),
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CommentsScreen(),
+                      ),
+                    );
+                  },
                   icon: Icon(
                     Icons.mode_comment_outlined,
                   ),
