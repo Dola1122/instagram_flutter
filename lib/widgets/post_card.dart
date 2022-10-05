@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter/models/user_model.dart';
 import 'package:instagram_flutter/providers/user_provider.dart';
@@ -8,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/comments_screen.dart';
+import '../utils/utils.dart';
 
 class PostCard extends StatefulWidget {
   final snap;
@@ -23,6 +25,29 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikedAnimating = false;
+  int numOfComments = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
+
+  Future<void> getComments() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection("posts")
+          .doc(widget.snap["postId"])
+          .collection("comments")
+          .get();
+      numOfComments = snap.docs.length;
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +101,10 @@ class _PostCardState extends State<PostCard> {
                           ]
                               .map(
                                 (e) => InkWell(
-                                  onTap: () {},
+                                  onTap: ()async {
+                                    FirestoreMethods().deletePost(widget.snap["postId"]);
+                                    Navigator.of(context).pop();
+                                  },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12, horizontal: 16),
@@ -226,7 +254,7 @@ class _PostCardState extends State<PostCard> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      "View all 200 comments",
+                      "View all $numOfComments comments",
                       style: const TextStyle(
                         fontSize: 16,
                         color: secondaryColor,
